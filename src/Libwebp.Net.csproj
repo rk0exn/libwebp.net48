@@ -1,7 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8D55798F-F3F7-439D-8882-F53B5E577FF9}</ProjectGuid>
+    <RootNamespace>Libwebp.Net</RootNamespace>
+    <AssemblyName>Libwebp.Net</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>2.0.0</Version>
     <Description>A high-performance .NET library for encoding images to Google's WebP format using native libwebp P/Invoke. Encode images to lossy and lossless WebP entirely in memory — no process spawning, no temp files. Supports the full range of WebP encoding options including quality, presets, lossless, crop, resize, multithreading, and more.</Description>
@@ -13,28 +21,40 @@
     <RepositoryType>Git</RepositoryType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="errors\OutputFileNameNotFoundException.cs" />
+    <Compile Include="errors\WebPEncodingException.cs" />
+    <Compile Include="interop\LibWebPNative.cs" />
+    <Compile Include="interop\LibWebPResolver.cs" />
+    <Compile Include="interop\WebPEnums.cs" />
+    <Compile Include="interop\WebPStructs.cs" />
+    <Compile Include="utility\FileHelper.cs" />
+    <Compile Include="utility\NativeEncoder.cs" />
+    <Compile Include="utility\PlatformImageDecoder.cs" />
+    <Compile Include="utility\Preset.cs" />
+    <Compile Include="utility\WebpEncoder.cs" />
+    <Compile Include="WebPConfiguration.cs" />
+    <Compile Include="WebpConfigurationBuilder.cs" />
+  </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Libwebp.Net.Tests" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-
   <ItemGroup>
-    <Compile Remove="bin\**" />
-    <Compile Remove="dist\**" />
-    <Compile Remove="Libwebp.Net.Middleware\**" />
-    <EmbeddedResource Remove="bin\**" />
-    <EmbeddedResource Remove="dist\**" />
-    <EmbeddedResource Remove="Libwebp.Net.Middleware\**" />
-    <None Remove="bin\**" />
-    <None Remove="dist\**" />
-    <None Remove="Libwebp.Net.Middleware\**" />
-  </ItemGroup>
-
-  <!-- Native libwebp shared libraries — stored in codecs/ and loaded
-       via P/Invoke at runtime using a custom NativeLibrary resolver.
-       For NuGet packaging they are mapped into runtimes/{rid}/native/. -->
-  <ItemGroup>
-    <!-- Windows -->
     <None Include="codecs\win\libwebp.dll" Pack="true" PackagePath="runtimes/win-x64/native/" Condition="Exists('codecs\win\libwebp.dll')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>libwebp.dll</Link>
@@ -43,7 +63,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>libsharpyuv.dll</Link>
     </None>
-    <!-- Linux -->
     <None Include="codecs\linux\libwebp.so" Pack="true" PackagePath="runtimes/linux-x64/native/" Condition="Exists('codecs\linux\libwebp.so')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>libwebp.so</Link>
@@ -52,7 +71,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>libsharpyuv.so</Link>
     </None>
-    <!-- macOS -->
     <None Include="codecs\osx\libwebp.dylib" Pack="true" PackagePath="runtimes/osx-arm64/native/" Condition="Exists('codecs\osx\libwebp.dylib')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>libwebp.dylib</Link>
@@ -62,5 +80,5 @@
       <Link>libsharpyuv.dylib</Link>
     </None>
   </ItemGroup>
-
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
