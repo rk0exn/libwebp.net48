@@ -1,9 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5601742B-E17A-437E-B312-67137551AB59}</ProjectGuid>
+    <RootNamespace>Libwebp.Net.Middleware</RootNamespace>
+    <AssemblyName>Libwebp.Net.Middleware</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.0</Version>
     <Description>ASP.NET Core middleware that automatically converts uploaded images (JPEG, PNG, GIF, BMP, TIFF) to Google's WebP format. Drop it into your pipeline and every image upload is optimised with zero code changes in your controllers.</Description>
@@ -13,13 +19,41 @@
     <RepositoryUrl>https://github.com/frankodoom/libwebp.net</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Compile Include="ApplicationBuilderExtensions.cs" />
+    <Compile Include="IWebpConversionService.cs" />
+    <Compile Include="ServiceCollectionExtensions.cs" />
+    <Compile Include="WebpConversionOptions.cs" />
+    <Compile Include="WebpConversionService.cs" />
+    <Compile Include="WebpFormFile.cs" />
+    <Compile Include="WebpUploadMiddleware.cs" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Libwebp.Net.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\Libwebp.Net.csproj">
+      <Project>{8D55798F-F3F7-439D-8882-F53B5E577FF9}</Project>
+      <Name>Libwebp.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

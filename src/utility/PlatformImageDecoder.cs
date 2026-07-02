@@ -87,7 +87,7 @@ namespace Libwebp.Net.utility
             }
 
             // All other formats — use GDI+ on Windows.
-            if (!OperatingSystem.IsWindows())
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 throw new PlatformNotSupportedException(
                     "Automatic image decoding for non-WebP formats is currently supported on Windows only. " +
@@ -119,7 +119,7 @@ namespace Libwebp.Net.utility
             nint pixelPtr = LibWebPNative.WebPDecodeRGBA(
                 webpData, (nuint)webpData.Length, out int width, out int height);
 
-            if (pixelPtr == nint.Zero)
+            if (pixelPtr == 0)
                 throw new InvalidOperationException("Failed to decode WebP image data.");
 
             try
@@ -145,7 +145,7 @@ namespace Libwebp.Net.utility
         private static readonly Lazy<nint> _gdipToken = new(() =>
         {
             var input = new GdipStartupInput { GdiplusVersion = 1 };
-            int status = GdiplusStartup(out nint token, ref input, nint.Zero);
+            int status = GdiplusStartup(out nint token, ref input, 0);
             if (status != 0)
                 throw new InvalidOperationException($"Failed to initialize GDI+. Status: {status}");
             return token;
@@ -157,9 +157,9 @@ namespace Libwebp.Net.utility
             // Ensure GDI+ is initialized
             _ = _gdipToken.Value;
 
-            nint hGlobal = nint.Zero;
-            nint comStream = nint.Zero;
-            nint bitmap = nint.Zero;
+            nint hGlobal = 0;
+            nint comStream = 0;
+            nint bitmap = 0;
 
             try
             {
@@ -167,7 +167,7 @@ namespace Libwebp.Net.utility
                 // CreateStreamOnHGlobal requires GlobalAlloc'd memory (not Marshal.AllocHGlobal
                 // which uses LocalAlloc).
                 hGlobal = GlobalAlloc(GMEM_MOVEABLE, (nuint)imageData.Length);
-                if (hGlobal == nint.Zero)
+                if (hGlobal == 0)
                     throw new OutOfMemoryException("Failed to allocate global memory for image data.");
 
                 nint pGlobal = GlobalLock(hGlobal);
@@ -179,7 +179,7 @@ namespace Libwebp.Net.utility
                 int hr = CreateStreamOnHGlobal(hGlobal, true, out comStream);
                 if (hr != 0)
                     throw new InvalidOperationException($"CreateStreamOnHGlobal failed. HRESULT: 0x{hr:X8}");
-                hGlobal = nint.Zero; // ownership transferred to the COM stream
+                hGlobal = 0; // ownership transferred to the COM stream
 
                 // Load image from the COM IStream
                 int status = GdipCreateBitmapFromStream(comStream, out bitmap);
@@ -231,11 +231,11 @@ namespace Libwebp.Net.utility
             }
             finally
             {
-                if (bitmap != nint.Zero)
+                if (bitmap != 0)
                     GdipDisposeImage(bitmap);
-                if (comStream != nint.Zero)
+                if (comStream != 0)
                     Marshal.Release(comStream);
-                if (hGlobal != nint.Zero)
+                if (hGlobal != 0)
                     GlobalFree(hGlobal);
             }
         }

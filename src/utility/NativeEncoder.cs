@@ -34,7 +34,7 @@ namespace Libwebp.Net.utility
             if (height <= 0) throw new ArgumentException("Height must be positive.", nameof(height));
 
             int stride = width * 4;
-            nint outputPtr = nint.Zero;
+            nint outputPtr = 0;
 
             try
             {
@@ -48,18 +48,18 @@ namespace Libwebp.Net.utility
                     size = LibWebPNative.WebPEncodeRGBA(rgba, width, height, stride, quality, out outputPtr);
                 }
 
-                if (size == 0 || outputPtr == nint.Zero)
+                if (size == 0 || outputPtr == 0)
                 {
                     throw new WebPEncodingException("WebP encoding failed (output size is 0).");
                 }
 
-                var result = new byte[(int)size];
-                Marshal.Copy(outputPtr, result, 0, (int)size);
+                var result = new byte[checked((int)size)];
+                Marshal.Copy(outputPtr, result, 0, result.Length);
                 return result;
             }
             finally
             {
-                if (outputPtr != nint.Zero)
+                if (outputPtr != 0)
                     LibWebPNative.WebPFree(outputPtr);
             }
         }
@@ -190,7 +190,7 @@ namespace Libwebp.Net.utility
                 var handle = GCHandle.FromIntPtr(picture.custom_ptr);
                 var stream = (MemoryStream)handle.Target!;
 
-                int size = (int)data_size;
+                int size = checked((int)data_size);
                 byte[] buffer = new byte[size];
                 Marshal.Copy(data, buffer, 0, size);
                 stream.Write(buffer, 0, size);

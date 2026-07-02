@@ -142,7 +142,7 @@ namespace Libwebp.Net.Tests
         public void WebPMemoryWriter_DefaultStruct_IsEmpty()
         {
             var writer = new WebPMemoryWriter();
-            Assert.Equal(nint.Zero, writer.mem);
+            Assert.Equal((nint)0, writer.mem);
             Assert.Equal((nuint)0, writer.size);
         }
     }

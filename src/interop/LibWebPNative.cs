@@ -225,7 +225,7 @@ namespace Libwebp.Net.Interop
         /// <summary>
         /// Decodes WebP data to RGBA pixels.
         /// Returns a pointer to the decoded buffer (caller must free with WebPFree).
-        /// Sets width/height on success, returns IntPtr.Zero on failure.
+        /// Sets width/height on success, returns 0 on failure.
         /// </summary>
         [DllImport(LibWebP, CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeRGBA")]
         public static extern nint WebPDecodeRGBA(

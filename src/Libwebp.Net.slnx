@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Libwebp.Net.csproj" />
+  <Project Path="Libwebp.Net.Middleware\Libwebp.Net.Middleware.csproj" />
+  <Project Path="..\client\console\console.csproj" />
+  <Project Path="..\client\web\web.csproj" />
+  <Project Path="..\tests\Libwebp.Net.Tests\Libwebp.Net.Tests.csproj" />
+  <Project Path="..\encoder\encoder.vcxproj" />
+</Solution>
